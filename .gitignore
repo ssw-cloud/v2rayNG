@@ -27,6 +27,7 @@ V2rayNG/local.properties
 
 # Ignore signing properties
 signing.properties
+.signing-local/
 
 # Ignore shared object files
 *.so
