@@ -97,16 +97,16 @@ jobs:
         echo "sdk.dir=${ANDROID_HOME}" > local.properties
         chmod 755 gradlew
         ./gradlew licenseFdroidReleaseReport
-        if [ -n "${APP_KEYSTORE_BASE64}" ] && [ -n "${APP_KEYSTORE_PASSWORD}" ] && [ -n "${APP_KEYSTORE_ALIAS}" ] && [ -n "${APP_KEY_PASSWORD}" ]; then
-          printf '%s' "${APP_KEYSTORE_BASE64}" | base64 --decode > "${RUNNER_TEMP}/android_keystore.jks"
-          ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file="${RUNNER_TEMP}/android_keystore.jks" \
-            -Pandroid.injected.signing.store.password="${APP_KEYSTORE_PASSWORD}" \
-            -Pandroid.injected.signing.key.alias="${APP_KEYSTORE_ALIAS}" \
-            -Pandroid.injected.signing.key.password="${APP_KEY_PASSWORD}"
-        else
-          ./gradlew assembleRelease
+        if [ -z "${APP_KEYSTORE_BASE64}" ] || [ -z "${APP_KEYSTORE_PASSWORD}" ] || [ -z "${APP_KEYSTORE_ALIAS}" ] || [ -z "${APP_KEY_PASSWORD}" ]; then
+          echo "Missing Android signing secrets. Refusing to publish an unsigned release."
+          exit 1
         fi
+        printf '%s' "${APP_KEYSTORE_BASE64}" | base64 --decode > "${RUNNER_TEMP}/android_keystore.jks"
+        ./gradlew assembleRelease \
+          -Pandroid.injected.signing.store.file="${RUNNER_TEMP}/android_keystore.jks" \
+          -Pandroid.injected.signing.store.password="${APP_KEYSTORE_PASSWORD}" \
+          -Pandroid.injected.signing.key.alias="${APP_KEYSTORE_ALIAS}" \
+          -Pandroid.injected.signing.key.password="${APP_KEY_PASSWORD}"
     
     - name: Upload arm64-v8a APK
       uses: actions/upload-artifact@v7
