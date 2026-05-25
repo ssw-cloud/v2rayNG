@@ -25,11 +25,11 @@ jobs:
         fetch-depth: '0'
 
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3.2.0
+      uses: android-actions/setup-android@v4.0.1
       with:
         log-accepted-android-sdk-licenses: false
         cmdline-tools-version: '13114758'
-        packages: 'platforms;android-36.1 build-tools;36.1.0 platform-tools'
+        packages: 'platforms;android-37 build-tools;36.1.0 platform-tools'
 
     - name: Install NDK
       run: |
@@ -73,7 +73,7 @@ jobs:
         popd
 
     - name: Download libv2ray
-      uses: robinraju/release-downloader@v1.12
+      uses: robinraju/release-downloader@v1.13
       with:
         repository: '2dust/AndroidLibXrayLite'
         tag: ${{ env.CURRENT_TAG }}
